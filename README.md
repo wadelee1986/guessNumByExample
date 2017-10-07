@@ -51,7 +51,7 @@ cd $GOPATH/src/github.com/hyperledger/fabric-sdk-go/
   # In the server directory
   cd $GOPATH/src/github.com/wadelee1986/guessNumByExample/src/server
   # run ...
-  go run \*.go
+  go run *.go
 
 4、访问 http://127.0.0.1:8080/
 
