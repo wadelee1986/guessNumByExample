@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Guess Number</title>
+
+	<script src='./js/vendor/phaser.min.js'></script>
+	<script src='socket.io.js'></script>
+
+  <script type="text/javascript">
+
+  window.onload = function () {
+      var conn;
+      var msg = document.getElementById("msg");
+      var log = document.getElementById("log");
+
+			var cast = [
+				"Alice", "Bob", "Carol", "Dave", "Eve",
+				"Faythe", "Mallory", "Oscar", "Peggy",
+				"Sybil", "Trent", "Wendy"
+			]
+
+			// Let's randomize initial username from the cast of characters, why not.
+			var username = cast[Math.floor(cast.length * Math.random())];
+
+			var name = document.getElementById('username');
+			name.value = username;  // initial
+			name.onkeydown = function (e) {
+				username = name.value;
+			}
+
+
+			var appendLog = function(item) {
+				log.value += item + "\n";
+				console.log(item);
+				// Scroll to latest.
+				log.scrollTop = log.scrollHeight;
+
+			}
+
+
+      function appendLogOld(item) {
+          var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
+          log.appendChild(item);
+          if (doScroll) {
+              log.scrollTop = log.scrollHeight - log.clientHeight;
+          }
+      }
+
+      document.getElementById("form").onsubmit = function () {
+          if (!conn) {
+              return false;
+          }
+          if (!msg.value) {
+              return false;
+          }
+
+          console.log("send msg:"+msg.value);
+          conn.send(name.value+":"+msg.value);
+          msg.value = "";
+          return false;
+      };
+
+      if (window["WebSocket"]) {
+          conn = new WebSocket("ws://" + document.location.host + "/ws");
+          conn.onclose = function (evt) {
+              var item = document.createElement("div");
+              item.innerHTML = "<b>Connection closed.</b>";
+              console.log("rec msg:"+item)
+              appendLog(item);
+          };
+          conn.onmessage = function (evt) {
+              var messages = evt.data.split('\n');
+              for (var i = 0; i < messages.length; i++) {
+                  item = messages[i];
+                  console.log("rec client msg:"+item);
+                  appendLog(item);
+              }
+          };
+      } else {
+          var item = document.createElement("div");
+          item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+          appendLog(item);
+      }
+  };
+  </script>
+
+		<style>
+		* {
+			box-sizing: border-box;
+			-webkit-transition: all 0.3s;
+			-moz-transition: all 0.3s;
+			transition: all 0.3s;
+		}
+
+		body {
+			position: absolute;
+			width: 100%; height: 100%; top: 0; margin: 0 auto;
+			background-color: #424;
+			color: #ccc;
+			text-align: center;
+			font-size: 24px;
+			font-family: monospace;
+		}
+		textarea {
+			background-color: #333;
+			color: #fff;
+			resize: none;
+		}
+		.chatarea {
+			position: relative; border: none;
+			width: 50%; min-width: 40em;
+			padding: 0.5em; margin: auto;
+		}
+		.active { background-color: #252; }
+		#log {
+			display: block;
+			width: 100%;
+			min-height: 15em;
+			margin-bottom: 1em;
+			padding: 8px;
+		}
+		.inputarea {
+			position: relative;
+			width: 100%;
+			height: 3em;
+			display: block;
+		}
+		#msg {
+			display: inline-block;
+			position: absolute; left: 0;
+			width: 89%; height: 100%;
+			padding: 8px 30px;
+			font-size: 80%;
+			background-color: #ccc;
+			border: 1px solid #999;
+		}
+		#send {
+			display: inline-block; position: absolute;
+			right: 0; top: 0;  height: 100%; width: 10%;
+			background-color: #202; color: #f8f;
+			font-variant: small-caps; font-size: 100%;
+			border: none; // box-shadow: 0 2px 5px #000;
+		}
+		#send:hover { background-color: #636; }
+		#username {
+			padding: 8px 2em; margin: 10px auto;
+			text-align: center;
+			display: block;
+			background-color: #000;
+			color: #999;
+			border: none;
+		}
+
+		#container{
+			 height:800px;
+			 width: 1000px;
+			 padding: 8px 2em; margin: 10px auto;
+
+		 }
+		</style>
+</head>
+<body>
+
+	<h1>game</h1>
+	<div id="container"></div>
+	<div class="chatarea">
+		<div class="inputarea">
+      <form id="form">
+			<input type="text" id="msg" >
+			<input type="submit" id="send" value="send">
+     </form>
+    </div>
+		<h3>log</h3>
+		<textarea id="log" readonly>
+		</textarea>
+
+
+	</div>
+	<input type="text" id="username" value="">
+	username
+
+
+	<script src='./js/RemotePlayer.js'></script>
+	<script src='./js/game.js'></script>
+
+</body>
+</html>
