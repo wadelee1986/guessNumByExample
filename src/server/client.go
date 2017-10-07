@@ -87,7 +87,7 @@ func (c *Client) readPump(cc blockchain.ChainCodeInterface) {
 				log.Println(msg[0])
 				log.Println(i)
 
-				result, err := cc.QueryValue()
+				result, err := cc.QueryBoardState()
 				if err != nil {
 					log.Println(err)
 				}

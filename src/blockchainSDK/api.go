@@ -25,6 +25,7 @@ import (
 
 type ChainCodeInterface interface {
 	QueryValue() (string, error)
+	QueryBoardState() (string, error)
 }
 
 var org1Name = "Org1"
@@ -341,6 +342,6 @@ func newMoveFunds(setup *BaseSetup) error {
 func (setup *BaseSetup) QueryBoardState() (string, error) {
 	fcn := "invoke"
 	var args []string
-	args = append(args, "query")
+	args = append(args, "queryboardstate")
 	return setup.Query(setup.ChannelID, setup.ChainCodeID, fcn, args)
 }
