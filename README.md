@@ -55,4 +55,4 @@ cd $GOPATH/src/github.com/hyperledger/fabric-sdk-go/
 
 4、访问 http://127.0.0.1:8080/
 
-5、在send前的输入框，输入猜测的数字， 小于1没有意义； 大于100有可能全输掉。
+5、在send前的输入框，输入猜测的数字， 小于1没有意义。
