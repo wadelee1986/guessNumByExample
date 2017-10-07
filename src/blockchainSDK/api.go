@@ -220,7 +220,7 @@ func GenerateRandomID() string {
 // InstallAndInstantiateExampleCC ..
 func (setup *BaseSetup) InstallAndInstantiateExampleCC() error {
 
-	chainCodePath := "github.com/example_cc"
+	chainCodePath := "chaincode"
 	chainCodeVersion := "v0"
 
 	if setup.ChainCodeID == "" {
@@ -335,4 +335,12 @@ func newMoveFunds(setup *BaseSetup) error {
 
 	_, err := fabricTxn.InvokeChaincode(setup.Client, setup.Channel, []apitxn.ProposalProcessor{setup.Channel.PrimaryPeer()}, setup.EventHub, setup.ChainCodeID, fcn, args, transientDataMap)
 	return err
+}
+
+// QueryBoardState ...
+func (setup *BaseSetup) QueryBoardState() (string, error) {
+	fcn := "invoke"
+	var args []string
+	args = append(args, "query")
+	return setup.Query(setup.ChannelID, setup.ChainCodeID, fcn, args)
 }
