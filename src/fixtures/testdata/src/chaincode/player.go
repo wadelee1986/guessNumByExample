@@ -3,10 +3,6 @@ package main
 import (
 	"fmt"
 	"sort"
-	"strconv"
-
-	"github.com/hyperledger/fabric/core/chaincode/shim"
-	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
 type SortBets []int
@@ -41,48 +37,6 @@ func (p *Player) resetBets() int {
 
 func (p *Player) WinnerAddBalance(bets int) {
 	p.Balance = p.Balance + bets
-}
-
-func PlayerAction(stub shim.ChaincodeStubInterface, name, action string) pb.Response {
-
-	// Initialize the chaincode
-	val, err := strconv.Atoi(action)
-	if err != nil {
-		return shim.Error("Expecting integer value for action holding")
-	}
-	board, err := GetBoardState(stub)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	if p, ok := board.Players[name]; ok {
-		board.Players[name] = Player{
-			Balance: p.Balance,
-			Bets:    append(p.Bets, val),
-		}
-	} else {
-		AddPlayer(stub, name)
-		return PlayerAction(stub, name, action)
-	}
-
-	totalBets := 0
-	for _, v := range board.Players {
-		for _, bet := range v.Bets {
-			if bet > 0 {
-				totalBets = totalBets + bet
-			}
-		}
-	}
-
-	if totalBets >= board.Max {
-		hasWinner, newRoundBoard := FindWinner(board)
-		if hasWinner {
-			return PutBoardStateByResponse(stub, newRoundBoard, shim.Success([]byte("haswinner")))
-		}
-		return PutBoardStateByResponse(stub, newRoundBoard, shim.Success([]byte("nowinner")))
-	}
-
-	return PutBoardState(stub, board)
 }
 
 func FindWinner(board Board) (bool, Board) {
