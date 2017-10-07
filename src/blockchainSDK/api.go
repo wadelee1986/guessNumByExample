@@ -26,6 +26,7 @@ import (
 type ChainCodeInterface interface {
 	QueryValue() (string, error)
 	QueryBoardState() (string, error)
+	PlayerAction(name, num string) (string, error)
 }
 
 var org1Name = "Org1"
@@ -234,6 +235,30 @@ func (setup *BaseSetup) InstallAndInstantiateExampleCC() error {
 
 	var args []string
 	args = append(args, "init")
+	//args = append(args, "a")
+	args = append(args, "100")
+	//args = append(args, "b")
+	//args = append(args, "200")
+
+	return setup.InstantiateCC(setup.ChainCodeID, chainCodePath, chainCodeVersion, args)
+}
+
+// InstallAndInstantiateExampleCC ..
+func (setup *BaseSetup) InstallAndInstantiateExampleCCBak() error {
+
+	chainCodePath := "chaincode"
+	chainCodeVersion := "v0"
+
+	if setup.ChainCodeID == "" {
+		setup.ChainCodeID = GenerateRandomID()
+	}
+
+	if err := setup.InstallCC(setup.ChainCodeID, chainCodePath, chainCodeVersion, nil); err != nil {
+		return err
+	}
+
+	var args []string
+	args = append(args, "init")
 	args = append(args, "a")
 	args = append(args, "100")
 	args = append(args, "b")
@@ -336,6 +361,21 @@ func newMoveFunds(setup *BaseSetup) error {
 
 	_, err := fabricTxn.InvokeChaincode(setup.Client, setup.Channel, []apitxn.ProposalProcessor{setup.Channel.PrimaryPeer()}, setup.EventHub, setup.ChainCodeID, fcn, args, transientDataMap)
 	return err
+}
+
+func (setup *BaseSetup) PlayerAction(name, num string) (string, error) {
+	fcn := "invoke"
+
+	var args []string
+	args = append(args, "playeraction")
+	args = append(args, name)
+	args = append(args, num)
+
+	transientDataMap := make(map[string][]byte)
+	transientDataMap["result"] = []byte("Transient data in move funds...")
+
+	_, err := fabricTxn.InvokeChaincode(setup.Client, setup.Channel, []apitxn.ProposalProcessor{setup.Channel.PrimaryPeer()}, setup.EventHub, setup.ChainCodeID, fcn, args, transientDataMap)
+	return "", err
 }
 
 // QueryBoardState ...

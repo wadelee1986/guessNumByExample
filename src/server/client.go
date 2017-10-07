@@ -91,7 +91,21 @@ func (c *Client) readPump(cc blockchain.ChainCodeInterface) {
 				if err != nil {
 					log.Println(err)
 				}
-				log.Println("chain code   query  result:")
+				log.Println("query board state result before action:")
+				log.Println(result)
+
+				result, err = cc.PlayerAction(msg[0], msg[1])
+				if err != nil {
+					log.Println(err)
+				}
+				log.Println("palyer action result:")
+				log.Println(result)
+
+				result, err = cc.QueryBoardState()
+				if err != nil {
+					log.Println(err)
+				}
+				log.Println("query board state result after action:")
 				log.Println(result)
 			}
 		}

@@ -12,8 +12,22 @@ import (
 type SimpleChaincode struct {
 }
 
-// Init ...
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+	fmt.Println("########### example_cc Init ###########")
+	_, args := stub.GetFunctionAndParameters()
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+	max, err := strconv.Atoi(args[0])
+	if err != nil {
+		return shim.Error("Expecting integer value for max holding")
+	}
+
+	return InitializeGame(stub, max)
+}
+
+// Init ...
+func (t *SimpleChaincode) InitBak(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("########### example_cc Init ###########")
 	_, args := stub.GetFunctionAndParameters()
 	var A, B string    // Entities
@@ -85,6 +99,11 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	if args[0] == "queryboardstate" {
 		return t.queryBoardState(stub, args)
 	}
+
+	if args[0] == "playeraction" {
+		return t.playerAction(stub, args)
+	}
+
 	if args[0] == "move" {
 		if err := stub.SetEvent("testEvent", []byte("Test Payload")); err != nil {
 			return shim.Error("Unable to set CC event: testEvent. Aborting transaction ...")
@@ -184,6 +203,65 @@ func (t *SimpleChaincode) queryBoardState(stub shim.ChaincodeStubInterface, args
 	}
 
 	return shim.Success(boardAsBytes)
+}
+
+func (t *SimpleChaincode) playerAction(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 3 {
+		return shim.Error("PlayerAction Incorrect number of arguments. Expecting at least 3")
+	}
+
+	board, err := GetBoardState(stub)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	name := args[1]
+	action := args[2]
+
+	val, err := strconv.Atoi(action)
+	if err != nil {
+		return shim.Error("Expecting integer value for action holding")
+	}
+
+	if p, ok := board.Players[name]; ok {
+		board.Players[name] = Player{
+			Balance: p.Balance,
+			Bets:    append(p.Bets, val),
+		}
+	} else {
+		pl := Player{
+			Balance: 0,
+			Bets:    make([]int, 0),
+		}
+		pl.Bets = append(pl.Bets, val)
+		board.Players[name] = pl
+	}
+
+	totalBets := 0
+	for _, v := range board.Players {
+		for _, bet := range v.Bets {
+			if bet > 0 {
+				totalBets = totalBets + bet
+			}
+		}
+	}
+
+	if totalBets >= board.Max {
+		hasWinner, newRoundBoard := FindWinner(board)
+		if hasWinner {
+			return PutBoardStateByResponse(stub, newRoundBoard, shim.Success([]byte("haswinner")))
+		}
+		return PutBoardStateByResponse(stub, newRoundBoard, shim.Success([]byte("nowinner")))
+	}
+
+	res := PutBoardState(stub, board)
+	if transientMap, err := stub.GetTransient(); err == nil {
+		if transientData, ok := transientMap["result"]; ok {
+			fmt.Printf("Transient data in 'move' : %s\n", transientData)
+			return shim.Success(transientData)
+		}
+	}
+	return res
 }
 
 // Query callback representing the query of a chaincode

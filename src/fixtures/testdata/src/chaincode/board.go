@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
@@ -26,22 +25,8 @@ func (b *Board) putPlayerByName(name string, pl Player) {
 	b.Players[name] = pl
 }
 
-func InitializeGame(stub shim.ChaincodeStubInterface) pb.Response {
-	var err error
-	var max int
-	_, args := stub.GetFunctionAndParameters()
-	if len(args) != 2 {
-		max = 10
-		//return shim.Error("InitializeGame Incorrect number of arguments. Expecting 1")
-	} else {
-		max, err = strconv.Atoi(args[1])
-		if err != nil {
-			return shim.Error("Expecting integer value for max holding")
-		}
-	}
-
+func InitializeGame(stub shim.ChaincodeStubInterface, max int) pb.Response {
 	// Initialize the chaincode
-
 	board := Board{Max: max,
 		Players: make(map[string]Player)}
 	return PutBoardState(stub, board)
