@@ -18,3 +18,41 @@
 
 4、从所有玩家中找出压的最小的数字，并且不重复的数字，那么这个玩家将得到这一居玩家压的所有数字；
    如果玩家压的都是重复的数字，那么所有数字都返回给对应的玩家。
+
+
+## 程序安装
+
+fabric -->  fabric-sdk-go server -->h5
+
+1、安装 fabric-sdk-go的环境；
+
+```bash
+
+#### download code
+go get github.com/hyperledger/fabric-sdk-go
+#### In the Fabric SDK Go directory
+cd $GOPATH/src/github.com/hyperledger/fabric-sdk-go/
+
+
+
+2、运行fabric环境
+
+```bash
+  ##### into fixture directory
+  cd $GOPATH/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/
+  ##### run fabric env
+  source latest-env.sh && sudo docker-compose up --force-recreate
+
+3、安装fabric-sdk-go server
+
+```bash
+  # download  code
+  go  get  github.com/wadelee1986/guessNumByExample
+  # In the server directory
+  cd $GOPATH/src/github.com/wadelee1986/guessNumByExample/src/server
+  # run ...
+  go run \*.go
+
+4、访问 http://127.0.0.1:8080/
+
+5、在send前的输入框，输入猜测的数字， 小于1没有意义； 大于100有可能全输掉。
