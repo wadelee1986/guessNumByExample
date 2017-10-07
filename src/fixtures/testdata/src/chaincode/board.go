@@ -114,6 +114,3 @@ func PutBoardStateByResponse(stub shim.ChaincodeStubInterface, board Board, res 
 	}
 	return res
 }
-
-func GetPlayersBlanceAndBetNum(stub shim.ChaincodeStubInterface) {
-}

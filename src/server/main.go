@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	blockchain "github.com/wadelee1986/guessNumByExample/src/blockchainSDK"
 
@@ -21,7 +22,7 @@ func StaticServer(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Methods", "GET,POST, DELETE")
 	fmt.Println("Static server begin ...........")
-	dir := "/home/wade.lee/goWorkProject/src/github.com/wadelee1986/guessNumByExample/static"
+	dir := os.Getenv("GOPATH") + "/src/github.com/wadelee1986/guessNumByExample/static"
 	staticHandler := http.FileServer(http.Dir(dir))
 	staticHandler.ServeHTTP(w, req)
 }

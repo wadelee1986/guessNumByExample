@@ -311,7 +311,7 @@ func NewChainCode() *BaseSetup {
 		ConfigFile:      ConfigTestFile,
 		ChannelID:       "mychannel",
 		OrgID:           org1Name,
-		ChannelConfig:   "/home/wade.lee/goWorkProject/src/github.com/wadelee1986/guessNumByExample/src/blockchainSDK/channel/mychannel.tx",
+		ChannelConfig:   os.Getenv("GOPATH") + "/src/github.com/wadelee1986/guessNumByExample/src/blockchainSDK/channel/mychannel.tx",
 		ConnectEventHub: true,
 	}
 
