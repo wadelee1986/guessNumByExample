@@ -57,6 +57,7 @@ func (setup *BaseSetup) installAndInstantiateGuessNumCC() error {
 	return setup.InstantiateCC(setup.ChainCodeID, chainCodePath, chainCodeVersion, args)
 }
 
+//PlayerAction ..
 func (setup *BaseSetup) PlayerAction(name, num string) (string, error) {
 	fcn := "invoke"
 
