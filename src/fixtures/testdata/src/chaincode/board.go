@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
@@ -29,32 +28,6 @@ func InitializeGame(stub shim.ChaincodeStubInterface, max int) pb.Response {
 	// Initialize the chaincode
 	board := Board{Max: max,
 		Players: make(map[string]Player)}
-	return PutBoardState(stub, board)
-}
-
-func AddPlayer(stub shim.ChaincodeStubInterface, name string) pb.Response {
-	board, err := GetBoardState(stub)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	if _, ok := board.Players[name]; ok {
-		return shim.Error(fmt.Sprintf("player name: %v  is already existed", name))
-	} else {
-		board.Players[name] = Player{Bets: make([]int, 0)}
-	}
-	return PutBoardState(stub, board)
-}
-
-func RemovePlayer(stub shim.ChaincodeStubInterface, name string) pb.Response {
-	board, err := GetBoardState(stub)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	if _, ok := board.Players[name]; ok {
-		delete(board.Players, name)
-	} else {
-		return shim.Error(fmt.Sprintf("player name: %v  is not existed", name))
-	}
 	return PutBoardState(stub, board)
 }
 
