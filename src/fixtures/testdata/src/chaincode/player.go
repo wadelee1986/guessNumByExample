@@ -22,6 +22,12 @@ type Player struct {
 	Bets    []int `json:"bet"`
 }
 
+type PlasersState struct {
+	Name      string `json:"name"`
+	Balance   int    `json:"balance"`
+	NumOfBets int    `json:"numofbets"`
+}
+
 func (p *Player) resetBets() int {
 	totalBets := 0
 	for _, v := range p.Bets {

@@ -26,6 +26,7 @@ import (
 type ChainCodeInterface interface {
 	QueryValue() (string, error)
 	QueryBoardState() (string, error)
+	QueryPlayersState() (string, error)
 	PlayerAction(name, num string) (string, error)
 }
 
@@ -310,7 +311,7 @@ func NewChainCode() *BaseSetup {
 		ConfigFile:      ConfigTestFile,
 		ChannelID:       "mychannel",
 		OrgID:           org1Name,
-		ChannelConfig:   "/home/wade.lee/goWorkProject/src/github.com/hyperledger/firstcc/server/src/blockchain/channel/mychannel.tx",
+		ChannelConfig:   "/home/wade.lee/goWorkProject/src/github.com/wadelee1986/guessNumByExample/src/blockchainSDK/channel/mychannel.tx",
 		ConnectEventHub: true,
 	}
 
@@ -374,8 +375,17 @@ func (setup *BaseSetup) PlayerAction(name, num string) (string, error) {
 	transientDataMap := make(map[string][]byte)
 	transientDataMap["result"] = []byte("Transient data in move funds...")
 
-	_, err := fabricTxn.InvokeChaincode(setup.Client, setup.Channel, []apitxn.ProposalProcessor{setup.Channel.PrimaryPeer()}, setup.EventHub, setup.ChainCodeID, fcn, args, transientDataMap)
+	txn, err := fabricTxn.InvokeChaincode(setup.Client, setup.Channel, []apitxn.ProposalProcessor{setup.Channel.PrimaryPeer()}, setup.EventHub, setup.ChainCodeID, fcn, args, transientDataMap)
+	format := "palyer action return txn id: %v  nonce: %v"
+	logrus.Debugf(format, txn.ID, txn.Nonce)
 	return "", err
+}
+
+func (setup *BaseSetup) QueryPlayersState() (string, error) {
+	fcn := "invoke"
+	var args []string
+	args = append(args, "queryplayersstate")
+	return setup.Query(setup.ChannelID, setup.ChainCodeID, fcn, args)
 }
 
 // QueryBoardState ...

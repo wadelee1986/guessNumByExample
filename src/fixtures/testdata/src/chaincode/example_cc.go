@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -100,6 +101,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.queryBoardState(stub, args)
 	}
 
+	if args[0] == "queryplayersstate" {
+		return t.queryplayersstate(stub, args)
+	}
+
 	if args[0] == "playeraction" {
 		return t.playerAction(stub, args)
 	}
@@ -192,9 +197,37 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 	return shim.Success(nil)
 }
 
+func (t *SimpleChaincode) queryplayersstate(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) != 1 {
+		return shim.Error("queryplayersstate Incorrect number of arguments. Expecting 1")
+	}
+
+	board, err := GetBoardState(stub)
+
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	res := []PlasersState{}
+
+	for name, v := range board.Players {
+		res = append(res, PlasersState{
+			Name:      name,
+			Balance:   v.Balance,
+			NumOfBets: len(v.Bets),
+		})
+	}
+
+	resAsBytes, err := json.Marshal(res)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(resAsBytes)
+}
+
 func (t *SimpleChaincode) queryBoardState(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
-		return shim.Error("query board state Incorrect number of arguments. Expecting name of the person to query")
+		return shim.Error("query board state Incorrect number of arguments. Expecting 1")
 	}
 
 	boardAsBytes, err := GetBoardStateBytes(stub)
