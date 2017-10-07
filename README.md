@@ -1,7 +1,7 @@
 # guessNumByExample
 
 
-## 需要查资料事情
+## 需要做的事情
 1、sdk invoke 后没有拿到chaincode返回值；目前, blockchain sdk需要通过query做出进入下一居的判断。
 
 2、前端页面需要通过js控制动画。
