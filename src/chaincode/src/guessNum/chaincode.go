@@ -85,7 +85,7 @@ func (t *SimpleChaincode) queryBoardState(stub shim.ChaincodeStubInterface, args
 		return shim.Error("query board state Incorrect number of arguments. Expecting 1")
 	}
 
-	boardAsBytes, err := GetBoardStateBytes(stub)
+	boardAsBytes, err := GetBoardStateAsBytes(stub)
 	if err != nil {
 		return shim.Error(err.Error())
 	}

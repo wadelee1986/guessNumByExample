@@ -39,7 +39,7 @@ func NewChainCode() *BaseSetup {
 // installAndInstantiateGuessNumCC ..
 func (setup *BaseSetup) installAndInstantiateGuessNumCC() error {
 
-	chainCodePath := "chaincode"
+	chainCodePath := "guessNum"
 	chainCodeVersion := "v0"
 
 	if setup.ChainCodeID == "" {

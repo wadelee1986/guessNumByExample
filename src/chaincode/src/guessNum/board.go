@@ -31,7 +31,7 @@ func InitializeGame(stub shim.ChaincodeStubInterface, max int) pb.Response {
 	return PutBoardState(stub, board)
 }
 
-func GetBoardStateBytes(stub shim.ChaincodeStubInterface) ([]byte, error) {
+func GetBoardStateAsBytes(stub shim.ChaincodeStubInterface) ([]byte, error) {
 	//Get the board state from the ledger
 	boardAsBytes, err := stub.GetState("board")
 	if err != nil {

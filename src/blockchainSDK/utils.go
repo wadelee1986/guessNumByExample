@@ -241,7 +241,7 @@ func (setup *BaseSetup) InstallCC(chainCodeID string, chainCodePath string, chai
 // GetDeployPath ..
 func (setup *BaseSetup) GetDeployPath() string {
 	pwd, _ := os.Getwd()
-	return path.Join(pwd, "../fixtures/testdata")
+	return path.Join(pwd, "../chaincode")
 }
 
 // Utility to create random string of strlen length
